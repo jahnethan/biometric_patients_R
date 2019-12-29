@@ -186,7 +186,7 @@ plot(wh3$Weight ~ wh3$Height)
 abline(lm(wh3$Weight ~ wh3$Height))
 pairs(~wh3$Weight + wh3$Height + wh3$IMC) #interesante
 
-install.packages("psych")
+#install.packages("psych")
 library(psych)
 pairs.panels(wh3[c(2,3,4)])
 
@@ -194,19 +194,19 @@ pairs.panels(wh3[c(2,3,4)])
 #UNIENDO LAS BASES DE DATOS EN UNA SOLA
 #bp4,gl2,ox2,wh3
 
-install.packages("dplyr")
-install.packages("Rcpp")
-install.packages("pkgconfig")
+#install.packages("dplyr")
+#install.packages("Rcpp")
+#install.packages("pkgconfig")
 library(dplyr)
-library(Rcpp)
-library(pkgconfig)
+#library(Rcpp)
+#library(pkgconfig)
 
 #SE NOTAN QUE LOS DATOS TIENEN EL ID Y LA FECHA EN COMUN ASI QUE SE VA A TRATAR
 #DE UNIR LAS BD EN UNA SOLA USANDO ESTAS DOS VARIABLES
 
 #SE DECIDE QUITAR LA HORA DE LAS BD
 
-install.packages(lubridate)
+#install.packages(lubridate)
 library(lubridate)
 
 #SE CREA UNA FUNCION PARA PROCESAR LAS FECHAS DE CADA BASE DE DATOS
@@ -216,7 +216,9 @@ format_date <- function(time){
   sec <- ':00' #no es necesario pero yo agregue los segundos.
   time3 <- paste(time2, sec, sep = "") #y pegue las dos cadenas
   time4 <- parse_date_time(time3, orders = "mdY HMS") #convierto a un formato legible por R
-  time5 <- format(time4, "%Y-%m-%d")
+  #time5 <- format(time4, "%Y-%m-%d")
+  #hour <- format(time4, "%H:%M")
+  return(time4)
 }
 
 "bp4
@@ -230,11 +232,61 @@ gl.d <- gl2
 ox.d <- ox2
 wh.d <- wh3
 
-bp.d$Date <- format_date(bp4$Date) #proceso para bp
-gl.d$Date <- format_date(gl2$Date) #proceso para gl
-ox.d$Date <- format_date(ox2$Date) #proceso para ox
-wh.d$Date <- format_date(wh3$Date) #proceso para wh
+############ PROCESO PARA SEPARAR LA FECHA CON LA HORA #######################
+#PROCESO PARA BP
+date.hour <- format_date(bp4$Date) #ejecuto funcion para convertir fecha
+bp.d$Date <- format(date.hour, "%Y-%m-%d") #saco la fecha a parte
+hour <- format(date.hour, "%H:%M") #creo variable para la hora
+bp.d <- mutate(bp.d, hour=hour) #creo columna para la hora
+View(bp.d)
+#END 
 
+#PROCESO PARA GL
+date.hour <- format_date(gl2$Date) #ejecuto funcion para convertir fecha
+gl.d$Date <- format(date.hour, "%Y-%m-%d") #saco la fecha a parte
+hour <- format(date.hour, "%H:%M") #creo variable para la hora
+gl.d <- mutate(gl.d, hour=hour) #creo columna para la hora
+View(gl.d)
+#END 
+
+#PROCESO PARA OX
+date.hour <- format_date(ox2$Date) #ejecuto funcion para convertir fecha
+ox.d$Date <- format(date.hour, "%Y-%m-%d") #saco la fecha a parte
+hour <- format(date.hour, "%H:%M") #creo variable para la hora
+ox.d <- mutate(ox.d, hour=hour) #creo columna para la hora
+View(ox.d)
+#END 
+
+#PROCESO PARA WH
+date.hour <- format_date(wh3$Date) #ejecuto funcion para convertir fecha
+wh.d$Date <- format(date.hour, "%Y-%m-%d") #saco la fecha a parte
+hour <- format(date.hour, "%H:%M") #creo variable para la hora
+wh.d <- mutate(wh.d, hour=hour) #creo columna para la hora
+View(wh.d)
+################################################################################# 
+
+################### ORDENANDO LOS DATA SETS #####################################
+bp.s  <- bp.d[order(bp.d$Patient),]       #ordenando por id para bp
+gl.s  <- gl.d[order(gl.d$Patient),]       #ordenando por id para gl
+ox.s  <- ox.d[order(ox.d$Patient),]       #ordenando por id para ox
+wh.s  <- wh.d[order(wh.d$Patient),]       #ordenando por id para wh
+#################################################################################
+
+#################### JUNTANDO LOS DATASET EN UNO SOLO ###########################
+
+################ creando datasets con hora exacta ###############
+"existen en coincidencia de fecha y hora exacta"
+
+
+#################################################################
+
+################ creando datasets con hora aproximada ###########
+"existe coincidencia de fecha pero con una diferencia de hora
+por unos segundos"
+
+#################################################################
+
+#################################################################################
 names(bp.d)
 
 #AGREGAR COLUMNAS paciente + date
