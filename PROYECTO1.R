@@ -1,8 +1,11 @@
-# leyendo cvs del proyecto
+
+################################## leyendo cvs del proyecto#################################
 bp <- read.csv(file="/home/jonathan/disco_d/proyectos/proyecto_final_bs/Anexo/bloodPressure.csv", header=TRUE, sep=",")
 gl <- read.csv(file="/home/jonathan/disco_d/proyectos/proyecto_final_bs/Anexo/Glucose.csv", header=TRUE, sep=",")
 ox <- read.csv(file="/home/jonathan/disco_d/proyectos/proyecto_final_bs/Anexo/Oximetry.csv", header=TRUE, sep=",")
 wh <- read.csv(file="/home/jonathan/disco_d/proyectos/proyecto_final_bs/Anexo/Weight_Height.csv", header=TRUE, sep=",")
+############################################################################################
+
 
 #revisando la informacion
 
@@ -270,23 +273,40 @@ bp.s  <- bp.d[order(bp.d$Patient),]       #ordenando por id para bp
 gl.s  <- gl.d[order(gl.d$Patient),]       #ordenando por id para gl
 ox.s  <- ox.d[order(ox.d$Patient),]       #ordenando por id para ox
 wh.s  <- wh.d[order(wh.d$Patient),]       #ordenando por id para wh
+
+View(bp.s)
+View(gl.s)
+View(ox.s)
+View(wh.s)
 #################################################################################
 
-#################### JUNTANDO LOS DATASET EN UNO SOLO ###########################
+#################### 2.- INTEGRACION DE DATOS ###########################
 
 ################ creando datasets con hora exacta ###############
 "existen en coincidencia de fecha y hora exacta"
 
+#bp.gl <- merge(bp.s, gl.s, by.x = c("Patient", "Date", "hour"), by.y = c("Patient", "Date", "hour"))
+#View(bp.gl)
 
+#se usa reduce y merge para combinar las columnas usando como identificadores "Patient","Date","hour".
+biometric <- Reduce(function(x, y) merge(x, y, by.x = c("Patient","Date","hour"), by.y = c("Patient","Date","hour")), list(bp.s,gl.s,ox.s,wh.s))
+View(biometric)
 #################################################################
 
 ################ creando datasets con hora aproximada ###########
-"existe coincidencia de fecha pero con una diferencia de hora
+"existe coincidencia de fecha pero con una diferencia de la hora
 por unos segundos"
 
 #################################################################
 
 #################################################################################
+
+############### 3.- FILTRADO DE DATOS ###############################################
+
+
+
+#################################################################################
+
 names(bp.d)
 
 #AGREGAR COLUMNAS paciente + date
